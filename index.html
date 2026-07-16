@@ -1,24 +1,103 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width,initial-scale=1">
-		<title>Happy Birthday Mera Baccha</title>
-		<link rel="stylesheet" href="style.css">
-	</head>
-	<body>
-		<div class="hero">
-			<h1>Happy Birthday Mera Baccha ❤️</h1>
-			<p>396 Days Together<br>18 June 2025 → 19 July 2026</p>
-			<button onclick="start()">Begin Our Story</button>
-		</div>
-		<div id="viewer" class="hide">
-			<img id="photo">
-			<p id="caption"></p>
-			<div id="end" class="hide">
-				<h2>Forever Yours,<br>Kishan Sisodiya</h2>
-			</div>
-		</div>
-		<script src="script.js"></script>
-	</body>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cinematic Birthday — Mera Baccha</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Star canvas lives behind everything -->
+  <canvas id="star-canvas" aria-hidden="true"></canvas>
+  <!-- Clouds canvas sits above stars but behind the slideshow -->
+  <canvas id="clouds-canvas" aria-hidden="true"></canvas>
+  <!-- Subtle moon element top-right (behind slideshow) -->
+  <div id="moon" aria-hidden="true"></div>
+
+  <!-- Floating hearts container -->
+  <div id="hearts" aria-hidden="true"></div>
+
+  <!-- Loading / Intro overlay -->
+  <div id="loader" class="overlay">
+    <div class="loader-center">
+      <div class="spinner"></div>
+      <h2>Preparing something special...</h2>
+      <p class="sub">A cinematic surprise for Mera Baccha</p>
+    </div>
+  </div>
+
+  <!-- Cinematic intro (plays then fades) -->
+  <div id="intro" class="overlay intro">
+    <div class="intro-content glass">
+      <h1 id="introTitle">✨ A Special Surprise ✨</h1>
+      <h2 id="introSubtitle">For</h2>
+      <p id="introTagline">Mera Baccha ❤️</p>
+
+      <div id="countdown" class="countdown">
+        <div class="countdown-item">
+          <span id="days">00</span>
+          <small>Days</small>
+        </div>
+        <div class="countdown-item">
+          <span id="hours">00</span>
+          <small>Hours</small>
+        </div>
+        <div class="countdown-item">
+          <span id="minutes">00</span>
+          <small>Minutes</small>
+        </div>
+        <div class="countdown-item">
+          <span id="seconds">00</span>
+          <small>Seconds</small>
+        </div>
+      </div>
+
+      <p class="countdown-note">Every second brings us closer to your special day.</p>
+      <button id="startBtn" class="btn" aria-disabled="true">Open the surprise</button>
+      <div id="countdownPopup" class="glass countdown-popup hidden"><p>❤️<br>Not yet...<br>Your surprise is waiting for midnight.</p></div>
+    </div>
+  </div>
+
+  <div id="cinematicOverlay" class="overlay cinematic hidden">
+    <div class="cinematic-container">
+      <div id="cinematicMessage" class="cinematic-message"></div>
+    </div>
+  </div>
+
+  <!-- Main app -->
+  <main id="app" class="hidden">
+    <div class="hud glass">
+      <div class="left">
+        <h3 class="title">A Night For Mera Baccha</h3>
+        <p class="meta">✨ A Special Night<br>for<br><strong>Mera Baccha ❤️</strong><br><strong><span id="daysTogether">❤️ 0 Days Together ❤️</span></strong></p>
+      </div>
+      <div class="right controls">
+        <button id="musicBtn" class="icon">Play</button>
+        <button id="muteBtn" class="icon">Mute</button>
+      </div>
+    </div>
+
+    <!-- Fullscreen slideshow container -->
+    <section id="slideshow" class="slideshow">
+      <!-- slides go here dynamically -->
+      <div id="caption" class="caption glass"></div>
+    </section>
+
+    <!-- Letter overlay (shown at the end) -->
+    <div id="letter" class="overlay hidden">
+      <div class="letter glass">
+        <div class="letter-body" id="letterBody"></div>
+        <button id="replayBtn" class="btn">Replay Slideshow</button>
+      </div>
+    </div>
+
+    <!-- small footer hint -->
+    <div class="footer">Scroll or use controls for more.</div>
+  </main>
+
+  <!-- Background music (auto-managed by script) -->
+  <audio id="bgMusic" src="assets/song.mp3" preload="auto" loop></audio>
+
+  <script src="script.js"></script>
+</body>
 </html>

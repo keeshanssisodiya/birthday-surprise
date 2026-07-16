@@ -1,1 +1,270 @@
-body{margin:0;background:#090914;color:#fff;font-family:Arial;text-align:center}.hero{padding:15vh 10vw}button{padding:12px 24px;border-radius:30px}img{max-width:90vw;max-height:70vh;border-radius:20px;box-shadow:0 0 30px #f6c}.hide{display:none}
+/*
+  style.css — Cinematic Romantic Birthday
+  Premium visuals: starfield, glassmorphism, floating hearts, Ken Burns slides
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap');
+
+:root{
+  --bg:#06030a;
+  --glass-bg: rgba(255,255,255,0.06);
+  --accent: #ff6b81; /* romantic accent */
+  --muted: rgba(255,255,255,0.65);
+}
+
+*{box-sizing:border-box}
+html, body {
+  height:100%;
+  margin:0;
+  overflow:hidden;
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.overlay.hidden{display:none}
+
+#intro{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+  width:100%;
+  overflow:hidden;
+}
+.intro .intro-content{position:relative;}
+
+.slide{
+position:absolute;
+inset:0;
+transition:opacity 1s ease;
+opacity:0;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+}
+
+/* Loader */
+#loader{background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.7));z-index:15}
+.loader-center{text-align:center;color:var(--muted)}
+.spinner{width:64px;height:64px;border-radius:50%;border:6px solid rgba(255,255,255,0.06);border-top-color:var(--accent);margin:0 auto 1rem;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Each slide contains a blurred full-screen background, a dark overlay, and a centered full photo */
+.slide .bg{position:absolute;inset:0;background-size:cover;background-position:center center;filter:blur(28px) saturate(0.9);transform:scale(1.06);z-index:0}
+.slide .overlay-dark{position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.55));z-index:1}
+.slide .content-wrap{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;padding:2rem}
+.center-photo{display:block;max-width:82vw;max-height:78vh;width:auto;height:auto;border-radius:18px;box-shadow:0 30px 60px rgba(6,3,10,0.6);border:1px solid rgba(255,255,255,0.06);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));object-fit:contain}
+/* Intro */
+/* Ken Burns zoom applied only to the centered photo */
+@keyframes kbZoom{from{transform:scale(1) translateZ(0)} to{transform:scale(1.06) translateZ(0)}}
+.center-photo.animate{animation:kbZoom 12s ease-in-out forwards}
+.intro .intro-content{max-width:720px;text-align:center}
+/* Countdown styles */
+.countdown{display:flex;justify-content:center;flex-wrap:wrap;gap:16px;margin:1.5rem 0 0;}
+.countdown-item{min-width:80px;padding:1rem 0.8rem;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);border-radius:16px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+.countdown-item span{display:block;font-family:'Playfair Display',serif;font-size:2.2rem;color:#fff;line-height:1;}
+.countdown-item small{display:block;margin-top:0.3rem;font-size:0.82rem;color:rgba(255,255,255,0.75);letter-spacing:0.06em;text-transform:uppercase;}
+.countdown-note{margin:1.2rem auto 0;max-width:380px;font-size:0.98rem;color:rgba(255,255,255,0.76);line-height:1.6;}
+#startBtn[aria-disabled="true"]{opacity:0.75;cursor:not-allowed;position:relative;}
+#startBtn[aria-disabled="true"]::after{content:'';position:absolute;inset:-2px;z-index:-1;border-radius:12px;box-shadow:0 0 18px rgba(255,107,129,0.5);animation:glowPulse 2.5s ease-in-out infinite;}
+#startBtn.disabled{pointer-events:auto;}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 14px rgba(255,107,129,0.25);}50%{box-shadow:0 0 28px rgba(255,107,129,0.42);}}
+.countdown-popup{position:absolute;left:50%;transform:translateX(-50%);bottom:18px;max-width:min(280px,calc(100% - 32px));padding:1rem 1.2rem;text-align:center;color:#fff;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.18);box-shadow:0 18px 40px rgba(0,0,0,0.28);border-radius:18px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
+.countdown-popup p{margin:0;font-size:0.95rem;line-height:1.5;}
+.countdown-popup.hidden{display:none !important;}
+
+.cinematic{background:rgba(0,0,0,0.92);z-index:999;opacity:0;transition:opacity 0.5s ease;display:flex;align-items:center;justify-content:center;}
+.cinematic.visible{opacity:1;}
+.cinematic-container{max-width:840px;padding:1.5rem;text-align:center;}
+.cinematic-message{position:relative;width:100%;min-height:10rem;font-family:'Playfair Display',serif;color:#fff;line-height:1.1;letter-spacing:0.02em;text-shadow:0 0 24px rgba(255,255,255,0.16);}
+.cinematic-message-layer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;opacity:0;transform:translateY(12px);transition:opacity 0.4s ease, transform 0.4s ease;}
+.cinematic-message-layer.visible{opacity:1;transform:translateY(0);}
+.cinematic-message-layer.small{font-size:1.55rem;}
+.cinematic-message-layer{padding:0 1rem;}
+.cinematic.hidden{display:none;opacity:0;}
+
+/* Ensure letter overlay sits above slideshow and cinematic */
+#letter{z-index:1001}
+
+.birthday-unlock{animation:birthdayFade 1.2s ease both;}
+@keyframes birthdayFade{0%{opacity:0;transform:translateY(12px);}100%{opacity:1;transform:translateY(0);}}
+
+.intro h1{font-family:'Playfair Display',serif;font-size:3rem;margin:0 0 0.2rem;color:#ffdede}
+/* Responsive: portrait photos look great */
+@media (max-width:1100px){
+  .slideshow{padding:0 24px;}
+  .slide .content-wrap{padding:1.5rem;gap:24px;}
+  .center-photo{max-width:88vw;max-height:70vh;border-radius:16px}
+  .caption{width:min(90vw,760px);}
+}
+@media (max-width:900px){
+  .hud{flex-direction:column;align-items:flex-start;gap:12px;padding:1rem 1.2rem;}
+  .hud .left{width:100%;}
+  .hud .right{width:100%;display:flex;justify-content:flex-start;gap:10px;}
+  .hud .title{font-size:1.05rem;}
+  .meta{font-size:0.95rem;line-height:1.5;}
+  .slideshow{padding:0 18px;}
+  .slide .content-wrap{padding:1.25rem;gap:24px;}
+  .center-photo{max-width:86vw;max-height:66vh;border-radius:15px;}
+  .caption{width:min(92vw,760px);}
+}
+@media (max-width:768px){
+  .intro h1{font-size:2.2rem}
+  .caption h3{font-size:1rem}
+  .loader-center .spinner{width:48px;height:48px}
+  .slide .content-wrap{max-height:calc(100vh - 180px);}
+}
+@media (max-width:480px){
+  .intro h1{font-size:1.95rem;}
+  .intro h2{font-size:1.15rem;}
+  .intro p{font-size:0.95rem;}
+  .btn{padding:0.7rem 1rem;}
+  .hud{top:16px;left:16px;right:16px;padding:0.9rem 1rem;}
+  .hud .title{font-size:1rem;}
+  .meta{font-size:0.88rem;}
+  .slideshow{padding:0 14px;}
+  .slide .content-wrap{padding:1rem;gap:20px;max-height:calc(100vh - 160px);}
+  .center-photo{max-width:88vw;max-height:56vh;border-radius:14px;}
+  .caption{width:min(92vw,760px);padding:0.9rem 1rem;}
+  .caption h3{font-size:0.98rem;}
+}
+.intro h2{font-family:'Playfair Display',serif;font-size:1.6rem;margin:0 0 1rem;color:var(--muted)}
+.btn{background:linear-gradient(90deg,var(--accent),#ff8aa2);border:none;padding:0.8rem 1.2rem;border-radius:10px;color:#111;font-weight:600;cursor:pointer;transition:opacity 0.6s ease;}
+.btn.fade-out{opacity:0;}
+
+/* Main HUD */
+#app{position:relative;z-index:5;height:100vh;display:flex;flex-direction:column}
+.hud{position:fixed;top:24px;left:24px;right:24px;display:flex;justify-content:space-between;align-items:center;padding:0.6rem 1rem;z-index:7}
+.hud .title{margin:0;font-family:'Playfair Display',serif;color:#fff;text-shadow:0 0 16px rgba(255,255,255,0.16);}
+.hud .meta{color:#fff;text-shadow:0 0 16px rgba(255,255,255,0.16);}
+.controls .icon{margin-left:0.6rem;background:transparent;border:1px solid rgba(255,255,255,0.08);padding:0.4rem 0.6rem;border-radius:8px;color:var(--muted)}
+
+/* Slideshow */
+.slideshow{
+position:fixed;
+inset:0;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:4;
+}
+.slideshow.fade-out{transition:opacity 600ms ease;opacity:0;pointer-events:none}
+.slide{
+position:absolute;
+inset:0;
+background-size:cover;
+background-position:center center;
+transition:opacity 1.6s ease, transform 12s ease;
+opacity:0;
+transform:scale(1);
+filter:brightness(0.75);
+}
+.slide.show{opacity:1}
+.slide.kb-scale{transform:scale(1.12)}
+
+/* (old caption rules removed) */
+
+/* Heart particles */
+.heart{position:absolute;width:18px;height:18px;background:linear-gradient(45deg,#ff6b81,#ff9fb1);transform:rotate(45deg);opacity:0.9;border-radius:4px}
+.heart:after,.heart:before{content:'';position:absolute;background:inherit;border-radius:50%}
+.heart:before{width:18px;height:18px;top:-9px;left:0}
+.heart:after{width:18px;height:18px;left:9px;top:0}
+@keyframes floatUp{
+  0%{transform:translateY(0) scale(0.9) rotate(45deg);opacity:1}
+  70%{opacity:0.9}
+  100%{transform:translateY(-140vh) scale(1.15) rotate(45deg);opacity:0}
+}
+
+.heart.float{animation:floatUp linear forwards}
+
+/* Letter */
+.letter{max-width:820px;padding:2rem;color:#fff}
+.letter{opacity:0;transform:translateY(8px);transition:opacity 450ms ease, transform 450ms ease}
+.letter-visible{opacity:1;transform:translateY(0)}
+
+/* Typewriter cursor */
+.type-cursor{display:inline-block;width:10px;background:linear-gradient(180deg,#fff,#ffdede);margin-left:2px;height:1.2em;vertical-align:baseline;animation:blink 900ms steps(1) infinite}
+@keyframes blink{50%{opacity:0}} 
+
+/* signature glow */
+.signature-glow{transition:box-shadow 900ms ease,color 900ms ease,transform 900ms ease;text-shadow:0 0 10px rgba(255,210,210,0.9);color:#fff;font-weight:700;transform:scale(1.02);letter-spacing:0.02em}
+
+/* replay button reveal */
+#replayBtn{display:none;margin:14px auto 0;opacity:0;transition:opacity 600ms ease}
+.replay-visible{display:inline-block;opacity:1}
+
+/* petals */
+.petal{position:fixed;width:12px;height:18px;border-radius:6px;background:linear-gradient(180deg,#ffb3c1,#ff6b81);pointer-events:none;z-index:30;transform-origin:center;will-change:transform,opacity}
+@keyframes petalFall{0%{transform:translateY(-20vh) rotate(0) }100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* fireworks canvas */
+#fireworks-canvas{position:fixed;inset:0;pointer-events:none;z-index:29}
+.letter-body{max-height:50vh;overflow:auto;line-height:1.6;color:#f8eaea}
+.letter-body p{margin:0 0 1rem;}
+.letter-body p:first-child{font-size:2.4rem;font-weight:800;letter-spacing:0.04em;margin-bottom:1.2rem;color:#fff;}
+.letter-body p:last-child{font-size:1.25rem;font-weight:700;color:#fff;}
+.letter-sign{margin-top:1.4rem;text-align:right;font-family:'Playfair Display',serif;color:#ffdede}
+
+.footer{position:fixed;right:24px;bottom:16px;color:rgba(255,255,255,0.45);font-size:12px;z-index:7}
+
+/* Confetti canvas placed at top when used */
+#confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:20}
+
+/* Responsive */
+@media (max-width:768px){
+  .intro h1{font-size:2.2rem}
+  .caption h3{font-size:1rem}
+  .loader-center .spinner{width:48px;height:48px}
+}
+
+/* small utility */
+.hidden{display:none !important}
+
+/* Ensure intro overlay is perfectly centered */
+#intro{display:flex;align-items:center;justify-content:center;z-index:15;min-height:100vh;}
+.intro .intro-content{margin:auto;max-width:720px;width:92%;}
+
+/* Star & clouds canvases */
+#star-canvas, #clouds-canvas{position:fixed;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+#star-canvas{z-index:1}
+#clouds-canvas{z-index:3}
+
+/* Moon */
+#moon{position:fixed;top:32px;right:32px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle at 30% 30%, #fff 0%, #f6f3ea 18%, #e6dfc9 35%, rgba(230,220,190,0.8) 55%, rgba(255,255,255,0.15) 100%);box-shadow:0 0 40px rgba(255,245,220,0.12), 0 0 120px rgba(255,240,200,0.06) inset;opacity:0.95;transform:translateZ(0);filter:blur(0.2px);z-index:3;}
+#moon::after{content:'';position:absolute;left:18%;top:22%;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,0.06)}
+
+/* gentle floating for moon */
+@keyframes moonFloat{0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+#moon{animation:moonFloat 12s ease-in-out infinite}
+
+/* Premium glassmorphism for the quote caption */
+.caption{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:calc(100% - 40px);
+  max-width:760px;
+  margin-top:28px;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(8px) saturate(1.05);
+  -webkit-backdrop-filter: blur(8px) saturate(1.05);
+  border-radius:14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 12px 30px rgba(2,2,6,0.6);
+  padding: 0.9rem 1.2rem;
+  transition: opacity 600ms ease, transform 600ms ease;
+  opacity: 0;
+  transform: translateY(10px);
+  font-family: 'Playfair Display', serif;
+  z-index: 12;
+}
+.caption.visible{opacity:1;transform:translateY(0)}
+.caption h3{margin:0;color:#fff;font-size:1.12rem;line-height:1.5;}
+
